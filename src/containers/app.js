@@ -68,6 +68,7 @@ class App extends Component {
     onClickListItem(movie) {
         this.setState({currentMovie:movie}, function () {
             this.applyVideoToCurrentMovie();
+            this.setRecommendation();
         })
     }
 
@@ -78,11 +79,18 @@ class App extends Component {
                     if (response.data.results[0].id !== this.state.currentMovie.id) {
                         this.setState({currentMovie:response.data.results[0]}, () => {
                            this.applyVideoToCurrentMovie();
+                           this.setRecommendation();
                         });
                     }
                 }
             }.bind(this));
         }
+    }
+
+    setRecommendation() {
+        axios.get(`${API_END_POINT}movie/${this.state.currentMovie.id}/recommendations?api_key=${API_KEY}&language=fr`).then(function (response) {
+            this.setState({movieList:response.data.results.slice(0, 5)});
+        }.bind(this));
     }
 }
 
