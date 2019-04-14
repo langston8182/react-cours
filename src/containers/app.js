@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import axios from 'axios';
 import SearchBar from '../components/search-bar';
+import VideoDetail from '../components/video-detail';
 import VideoList from './video-list'
 
 const API_END_POINT = "https://api.themoviedb.org/3/";
@@ -18,9 +19,6 @@ class App extends Component {
         axios.get(`${API_END_POINT}${POPULAR_MOVIES_URL}&api_key=${API_KEY}`).then(function (response) {
             this.setState({movieList:response.data.results.slice(1, 6)});
             this.setState({currentMovie:response.data.results[0]});
-            console.log('---------------');
-            console.log('', this.state.movieList);
-            console.log('---------------');
         }.bind(this));
     }
 
@@ -29,6 +27,7 @@ class App extends Component {
             <div>
                 <SearchBar/>
                 <VideoList/>
+                <VideoDetail title={this.state.currentMovie.title} description={this.state.currentMovie.overview} />
             </div>
         )
     }
