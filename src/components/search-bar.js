@@ -3,7 +3,12 @@ import React, {Component} from "react";
 class SearchBar extends Component {
     constructor(props) {
         super(props);
-        this.state = {searchText:"", placeHolder:"Tapez votre film"};
+        this.state = {
+            searchText:"",
+            placeHolder:"Tapez votre film",
+            intervalBeforeRequest:5000,
+            lockRequest: false
+        };
     }
 
     render() {
@@ -20,11 +25,22 @@ class SearchBar extends Component {
     }
 
     handleOnClick(event) {
-        this.props.callback(this.state.searchText);
+        this.search();
     }
 
     handleChange(event) {
         this.setState({searchText:event.target.value});
+        if (!this.state.lockRequest) {
+            this.setState({lockRequest: true});
+            setTimeout(() => {
+                this.search();
+            }, this.state.intervalBeforeRequest);
+        }
+    }
+
+    search() {
+        this.props.callback(this.state.searchText);
+        this.setState({lockRequest: false});
     }
 }
 
