@@ -2,10 +2,6 @@ import React from 'react';
 import VideoListItem from '../components/video-list-item';
 
 const VideoList = ({movieList}) => {
-    console.log('---------------');
-    console.log('', {movieList});
-    console.log('---------------');
-
     return (
       <div>
           <ul>
