@@ -7,6 +7,7 @@ import VideoList from './video-list'
 
 const API_END_POINT = "https://api.themoviedb.org/3/";
 const POPULAR_MOVIES_URL = "discover/movie?language=fr&sort_by=popularity.des&include_adult=false&append_to_response=images";
+const SEARCH_URL = "search/movie?language=fr&includ_adult=false";
 const API_KEY = "09d238f73c912341314945569e1349f5";
 
 class App extends Component {
@@ -41,14 +42,14 @@ class App extends Component {
     render() {
         const renderVideoList = () => {
             if (this.state.movieList.length >= 5) {
-                return <VideoList movieList={this.state.movieList} callback={this.receiveCallback.bind(this)} />;
+                return <VideoList movieList={this.state.movieList} callback={this.onClickListItem.bind(this)} />;
             }
         };
 
         return (
             <div>
                 <div className="search_bar">
-                    <SearchBar/>
+                    <SearchBar callback={this.onClickSearch.bind(this)}/>
                 </div>
                 <div className="row">
                     <div className="col-md-8">
@@ -64,10 +65,24 @@ class App extends Component {
     }
 
     // function pour etre certain que le setState soit fait
-    receiveCallback(movie) {
+    onClickListItem(movie) {
         this.setState({currentMovie:movie}, function () {
             this.applyVideoToCurrentMovie();
         })
+    }
+
+    onClickSearch(searchText) {
+        if (searchText) {
+            axios.get(`${API_END_POINT}${SEARCH_URL}&api_key=${API_KEY}&query=${searchText}`).then(function (response) {
+                if (response.data && response.data.results[0]) {
+                    if (response.data.results[0].id !== this.state.currentMovie.id) {
+                        this.setState({currentMovie:response.data.results[0]}, () => {
+                           this.applyVideoToCurrentMovie();
+                        });
+                    }
+                }
+            }.bind(this));
+        }
     }
 }
 
